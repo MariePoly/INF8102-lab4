@@ -1,0 +1,128 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Polystudent EC2 instance, security group, IAM profile"
+
+Parameters:
+
+  PublicSubnetId:
+    Type: String
+    Description: "Subnet ID for public AZ1"
+
+  VpcId:
+    Type: String
+    Description: "VPC ID where the instance and SG will be created"
+
+  KeyPairName:
+    Type: String
+    Default: "polystudent-key"
+    Description: "Name of EC2 Key Pair"
+
+  InstanceProfileName:
+    Type: String
+    Default: "LabInstanceProfile"
+    Description: "Existing IAM Instance Profile"
+
+  AmiId:
+    Type: String
+    Default: "ami-0dd67d541aa70c8b9"
+    Description: "Amazon Linux or Ubuntu AMI"
+
+  InstanceType:
+    Type: String
+    Default: "t3.micro"
+
+  VolumeSize:
+    Type: Number
+    Default: 80
+
+Resources:
+
+  
+  # Security Group 
+  PolystudentSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: polystudent-sg-cfn
+      GroupDescription: "Security group for polystudent EC2 (CloudFormation)"
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 1433
+          ToPort: 1433
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 27017
+          ToPort: 27017
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: "polystudent-sg1"
+        - Key: Environment
+          Value: "polystudent"
+
+
+  # EC2 Instance 
+  PolystudentEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: !Ref AmiId
+      KeyName: !Ref KeyPairName
+
+      NetworkInterfaces:
+        - DeviceIndex: 0
+          SubnetId: !Ref PublicSubnetId
+          GroupSet:
+            - !Ref PolystudentSecurityGroup
+          AssociatePublicIpAddress: true
+
+      IamInstanceProfile: !Ref InstanceProfileName
+
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sda1"
+          Ebs:
+            VolumeSize: !Ref VolumeSize
+            VolumeType: gp3
+            DeleteOnTermination: false
+
+      Tags:
+        - Key: Name
+          Value: "polystudent-ec2"
+        - Key: Environment
+          Value: "polystudent"
+
+Outputs:
+  InstanceId:
+    Description: "EC2 instance ID"
+    Value: !Ref PolystudentEC2
+
+  SecurityGroupId:
+    Description: "Security Group ID"
+    Value: !Ref PolystudentSecurityGroup
+
+  PublicIP:
+    Description: "Public IP of the instance"
+    Value: !GetAtt PolystudentEC2.PublicIp

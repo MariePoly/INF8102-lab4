@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Secure S3 bucket"
+
+Parameters:
+  BucketName:
+    Type: String
+    Default: "polystudents3-tp4-marie"
+    Description: "bucket S3"
+
+  KmsKeyArn:
+    Type: String
+    Default: "arn:aws:kms:ca-central-1:071770169281:key/8aeffff8-4d29-4020-87e5-c2eb904f358b"
+    Description: "ARN de la clé KMS utilisée pour le chiffrement SSE-KMS"
+
+Resources:
+
+  SecureS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      AccessControl: Private
+
+      VersioningConfiguration:
+        Status: Enabled
+
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: !Ref KmsKeyArn
+
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+
+      Tags:
+        - Key: Name
+          Value: !Ref BucketName
+        - Key: Environment
+          Value: "polystudent"
+
+Outputs:
+  BucketNameOutput:
+    Description: "Bucket created successfully"
+    Value: !Ref SecureS3Bucket
+
+  BucketArnOutput:
+    Description: "ARN du bucket"
+    Value: 
+      Fn::GetAtt:
+        - SecureS3Bucket
+        - Arn

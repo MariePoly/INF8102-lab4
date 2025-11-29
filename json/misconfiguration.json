@@ -1,0 +1,50 @@
+[
+  {
+    "ID": "AVD-AWS-0028",
+    "Severity": "HIGH",
+    "Description": "Instance does not require IMDS access to require a token.",
+    "CVSSv3": null
+  },
+  {
+    "ID": "AVD-AWS-0107",
+    "Severity": "HIGH",
+    "Description": "Security group rule allows unrestricted ingress from any IP address.",
+    "CVSSv3": null
+  },
+  {
+    "ID": "AVD-AWS-0107",
+    "Severity": "HIGH",
+    "Description": "Security group rule allows unrestricted ingress from any IP address.",
+    "CVSSv3": null
+  },
+  {
+    "ID": "AVD-AWS-0131",
+    "Severity": "HIGH",
+    "Description": "Root block device is not encrypted.",
+    "CVSSv3": null
+  },
+  {
+    "ID": "AVD-AWS-0107",
+    "Severity": "HIGH",
+    "Description": "Security group rule allows unrestricted ingress from any IP address.",
+    "CVSSv3": null
+  },
+  {
+    "ID": "AVD-AWS-0107",
+    "Severity": "HIGH",
+    "Description": "Security group rule allows unrestricted ingress from any IP address.",
+    "CVSSv3": null
+  },
+  {
+    "ID": "aws-vpc-no-public-ingress-sgr",
+    "Severity": "HIGH",
+    "Description": "Subnet associates public IP address.",
+    "CVSSv3": null
+  },
+  {
+    "ID": "aws-vpc-no-public-ingress-sgr",
+    "Severity": "HIGH",
+    "Description": "Subnet associates public IP address.",
+    "CVSSv3": null
+  }
+]
